@@ -34,51 +34,46 @@ function runSpeechRecognition() {
 }
 
 // ==========================SPECCH SYNTHESIZER===========================
-
-function runSpeakSynthesis(){
-    console.log(transcript)
-
-    var voiceList = document.querySelector('#voiceList');
+var voiceList = document.querySelector('#voiceList');
     var btnspeak = document.querySelector('#btnspeak');
 
     var texttospeech = window.speechSynthesis;
     var voices = [];
-    
     GetVoices();
-    
     if (speechSynthesis !== undefined); {
         speechSynthesis.onvoiceschanged = GetVoices;
     }
-    
+    function GetVoices() {
+        voices = texttospeech.getVoices();
+        voiceList.innerHTML = '';
+        voices.forEach((voice) => {
+            var listItem = document.createElement('option');
+            listItem.textContent = voice.name;
+            listItem.setAttribute('data-lang', voice.lang);
+            listItem.setAttribute('data-name', voice.name);
+            voiceList.appendChild(listItem);
+            
+        });
+        
+        voiceList.selectedIndex = 0;
+        
+    }
+ 
+
+function runSpeakSynthesis(){
+    console.log(transcript)
     btnspeak.addEventListener('click', () => {
         var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+        console.log(selectedVoiceName);
         var toSpeak = new SpeechSynthesisUtterance(transcript);
     voices.forEach((voice) => {
         if (voice.name === selectedVoiceName) {
             toSpeak.voice = voice;
-
         }
     });
 
     texttospeech.speak(toSpeak);
 
 });
-
-function GetVoices() {
-    voices = texttospeech.getVoices();
-    voiceList.innerHTML = '';
-    voices.forEach((voice) => {
-        var listItem = document.createElement('option');
-        listItem.textContent = voice.name;
-        listItem.setAttribute('data-lang', voice.lang);
-        listItem.setAttribute('data-name', voice.name);
-        voiceList.appendChild(listItem);
-        
-    });
-    
-    voiceList.selectedIndex = 0;
-    
-}
-
 }
 // ====================================================================================================
